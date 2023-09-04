@@ -1,0 +1,32 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+menu.cpu=Processor
+
+## RL78/G24 Fast Prototyping Board 64P Board Description
+g24-fpb-64p.name=RL78-G24 Fast Prototyping Board
+g24-fpb-64p.upload.tool=rl78flash
+g24-fpb-64p.upload.protocol=rl78
+g24-fpb-64p.upload.maximum_size=131072
+g24-fpb-64p.upload.maximum_data_size=12288
+g24-fpb-64p.upload.speed=115200
+
+g24-fpb-64p.bootloader.tool=
+g24-fpb-64p.bootloader.low_fuses=
+g24-fpb-64p.bootloader.high_fuses=
+g24-fpb-64p.bootloader.extended_fuses=
+g24-fpb-64p.bootloader.unlock_bits=
+g24-fpb-64p.bootloader.lock_bits=
+g24-fpb-64p.bootloader.file=
+
+g24-fpb-64p.build.mcu=rl78
+g24-fpb-64p.build.f_cpu=48000000L
+g24-fpb-64p.build.board=RL78G24_FPB
+g24-fpb-64p.build.core=rl78g24
+########## TSSR changed ##########
+g24-fpb-64p.build.ldscript=variants/g24-fpb-64p/linker_scripts/rl78_R7F101GLG.ld
+########## TSSR changed ##########
+g24-fpb-64p.build.variant=g24-fpb-64p
+g24-fpb-64p.build.extra_flags=-DGRPROT
+
+##############################################################
+#<EOF>
