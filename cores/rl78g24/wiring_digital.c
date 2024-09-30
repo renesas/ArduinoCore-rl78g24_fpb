@@ -1,32 +1,3 @@
-/*
-  wiring_digital.c - digital input and output functions
-  Part of Arduino - http://www.arduino.cc/
-
-  Copyright (c) 2005-2006 David A. Mellis
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General
-  Public License along with this library; if not, write to the
-  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-  Boston, MA  02111-1307  USA
-
-  Modified 28 September 2010 by Mark Sproul
-
-  $Id: wiring.c 248 2007-02-03 15:36:30Z mellis $
-*/
-/*
- * Modified  4 Mar  2017 by Yuuki Okamiya for RL78/G13
-*/
-
 #define ARDUINO_MAIN
 #include "wiring_private.h"
 #include "pins_variant.h"
@@ -40,6 +11,7 @@ extern bool g_u8AnalogWriteAvailableTable[NUM_DIGITAL_PINS];
 extern const PinTableType * pinTablelist[NUM_DIGITAL_PINS];
 extern Pwm_func pwm_ch[PWM_CH_NUM];
 extern int8_t get_pwm_channel(uint8_t pwm_num);
+extern bool g_u8AnalogReadAvailableTable[NUM_ANALOG_INPUTS];
 
 /**********************************************************************************************************************
  * Function Name: pintable setting
@@ -113,6 +85,11 @@ void pinMode(pin_size_t pin, PinMode pinMode)
         if (0!=p->pmca)
         {
             *p->portModeControlARegisterAddr &= (unsigned long)~(p->pmca);
+            int8_t pin_index = (int8_t)pin - ANALOG_PIN_START_NUMBER;
+            if ((pin_index >= 0) && (pin_index < NUM_ANALOG_INPUTS))
+            {
+                g_u8AnalogReadAvailableTable[pin_index] = false;
+            }
         }
         /* clear pmct register when touch pin */
 #if defined(G22_FPB) || defined(G23_FPB)
@@ -131,12 +108,10 @@ void pinMode(pin_size_t pin, PinMode pinMode)
         }
 #endif // G23_FPB
         /* clear ccde register */
-#if defined(G23_FPB)
         if (0!=p->ccde)
         {
             *p->portOutCurControlRegisterAddr &= (unsigned long)~(p->ccde);
         }
-#endif // G23_FPB
 
         if (g_u8AnalogWriteAvailableTable[pin]) {
             _turnOffPwmPin(pin);    /* PWM setting cancel */
@@ -176,11 +151,9 @@ void pinMode(pin_size_t pin, PinMode pinMode)
             if (0 != p->pom){
                 *p->portOutputModeRegisterAddr &= (unsigned long)~(0x1 << p->bit);  /* set Normal Output */
             }
-#if defined(G23_FPB)
             if (0 != p->pdidis){
                 *p->portDigInputDisRegisterAddr &= (unsigned long)~(0x1 << p->bit);    /* set Input enable */
             }
-#endif // G23_FPB
             break;
         case OUTPUT:
         case OUTPUT_OPENDRAIN:
@@ -192,20 +165,16 @@ void pinMode(pin_size_t pin, PinMode pinMode)
                 if (0 != p->pom){
                     *p->portOutputModeRegisterAddr |= (unsigned long)(0x1 << p->bit);    /* set N-ch OpenDrain output */
                 }
-#if defined(G23_FPB)
                 if (0 != p->pdidis){
                     *p->portDigInputDisRegisterAddr |= (unsigned long)(0x1 << p->bit);    /* set N-ch Input disable */
                 }
-#endif // G23_FPB
             } else {
                 if (0 != p->pom){
                     *p->portOutputModeRegisterAddr &= (unsigned long)~(0x1 << p->bit);  /* set Normal Output */
                 }
-#if defined(G23_FPB)
                 if (0 != p->pdidis){
                     *p->portDigInputDisRegisterAddr &= (unsigned long)~(0x1 << p->bit);    /* set Input enable */
                 }
-#endif // G23_FPB
             }
             if (0 != p->pm){
                 *p->portModeRegisterAddr &= (unsigned long)~(0x1 << p->bit);        /* set Output Mode */
@@ -289,20 +258,13 @@ void DisableDigitalInput(uint8_t pin)
 {
 
     if (pin < NUM_DIGITAL_PINS) {
-        //PinTableType *p;
-        //PinTableType pin_tbl;
-        //p = (PinTableType*)&pin_tbl;
-        //getPinTable(pin,p);
-
         const PinTableType ** pp;
         PinTableType * p;
         pp = &pinTablelist[pin];
         p = (PinTableType *)*pp;
-#if defined(G23_FPB)
         if (0 != p->pdidis){    /* can be changed */
             *p->portDigInputDisRegisterAddr |= (unsigned long)(0x1 << p->bit);    /* Input disable */
         }
-#endif // G23_FPB
     }
 }
 
@@ -316,20 +278,13 @@ void EnableDigitalInput(uint8_t pin)
 {
 
     if (pin < NUM_DIGITAL_PINS) {
-        //PinTableType *p;
-        //PinTableType pin_tbl;
-        //p = (PinTableType*)&pin_tbl;
-        //getPinTable(pin,p);
-
         const PinTableType ** pp;
         PinTableType * p;
         pp = &pinTablelist[pin];
         p = (PinTableType *)*pp;
-#if defined(G23_FPB)
         if (0 != p->pdidis){    /* can be changed */
             *p->portDigInputDisRegisterAddr &= (unsigned long)~(0x1 << p->bit);    /* set Input enable */
         }
-#endif // G23_FPB
     }
 }
 #endif /*__RL78__*/

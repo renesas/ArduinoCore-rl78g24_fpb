@@ -67,9 +67,7 @@ void R_Config_ADC_Create(void)
     /* Set INTAD0 priority */
     ADPR10 = 1U;
     ADPR00 = 1U;
-    /* Set ANI18 pin */
-    PMCA14 |= 0x80U;
-    PM14 |= 0x80U;
+
     ADVMOD = 1U;
     ADM0 = _20_AD_CONVERSION_CLOCK_2 | _00_AD_TIME_MODE_NORMAL_1;
     ADM1 = _20_AD_CONVMODE_ONESELECT | _00_AD_FCLK_BETWEEN_4_48;

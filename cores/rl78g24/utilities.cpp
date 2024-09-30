@@ -29,7 +29,12 @@ extern "C" {
 #include "Config_ADC.h"
 }
 
-
+#if defined(G22_FPB) || defined(G23_FPB)
+#define USE_PERIODIC (1) // Set 1 when issue was solved. //KAD change from 0 to 1
+#else
+#define USE_PERIODIC (0) // Set 1 when issue was solved.
+#endif // defined(G22_FPB) || defined(G23_FPB)
+#if USE_PERIODIC
 // 周期起動ハンドラ関数テーブル
 static struct {
     fITInterruptFunc_t afCyclicHandler;
@@ -53,6 +58,7 @@ static void PeriodicMillisIntervalFunc()
         g_u32timer_periodic = 0;
     }
 }
+#endif //USE_PERIODIC
 
 /**
  * タイマーアレイユニットの停止
@@ -407,6 +413,7 @@ void setOperationClockMode(uint8_t u8ClockMode)
  * 番号を指定すると誤動作する可能性があります。
  ************************************************************************** */
 
+#if USE_PERIODIC
 void attachIntervalTimerHandler(void (*fFunction)(unsigned long u32Milles))
 {
     g_fITInterruptFunc = fFunction;
@@ -503,7 +510,7 @@ void execCyclicHandler(void)
 }
 
 }
-
+#endif// USE_PERIODIC == 1
 
 /**
  * MCUに内蔵されている温度センサから温度（摂氏/華氏）を取得します。
@@ -518,7 +525,6 @@ void execCyclicHandler(void)
 int getTemperature(uint8_t u8Mode)
 {
     extern uint8_t  g_adc_int_flg;
-    uint8_t adc_end_flg = 0;
 
     uint8_t u8count;
     uint16_t u16temp;
