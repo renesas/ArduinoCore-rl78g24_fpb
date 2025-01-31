@@ -16,9 +16,28 @@
 #define UART1_CHANNEL       1       // UART1(Serial1)
 #define UART2_CHANNEL       2       // UART2(Serial2)
 
+/* SPI(CSI) Definition */
+#define USE_CSI      (1) // Set to '1' when Use SPI Hardware.
+
+#if defined(USE_CSI) && USE_CSI
+
+// #define CSI_CHANNEL0 (0) // USE CSI00 for SPI
+// #define CSI_CHANNEL1 (1) // USE CSI01 for SPI
+#define CSI_CHANNEL2 (2) // USE CSI10 for SPI
+#define CSI_CHANNEL3 (3) // USE CSI11 for SPI
+// #define CSI_CHANNEL4 (4) // USE CSI20 for SPI
+// #define CSI_CHANNEL5 (5) // USE CSI21 for SPI
+// #define CSI_CHANNEL6 (6) // USE CSI30 for SPI
+// #define CSI_CHANNEL7 (7) // USE CSI31 for SPI
+
+#endif /* defined(USE_CSI) && USE_CSI */
+
 /* IIC Definition */
 #define IIC_CHANNEL0 (0)
-#define IIC_CHANNEL1 (0)
+//#define IIC_CHANNEL1 (1)
+#define IIC_CHANNEL2 (2)
+#define IIC_CHANNEL3 (3)
+#define IIC_CHANNEL4 (4)
 
 #define CHECK_PINMODE_INHIBIT_RL78(p) (\
     (p) == 45 || /* P21(AVREFM) */\
@@ -40,8 +59,30 @@ int8_t get_tone_channel(uint8_t tone_num);
 #define analogInputToDigitalPin(p)  ((p < 6) ? (p) + 52 : -1)
 #define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11 || (p) == 12 || (p) == 13)
 
+#define PIN_SPI_SS    (10)
+#define PIN_SPI_MOSI  (11)
+#define PIN_SPI_MISO  (12)
+#define PIN_SPI_SCK   (13)
+
+extern const uint8_t SS;
+extern const uint8_t MOSI;
+extern const uint8_t MISO;
+extern const uint8_t SCK;
+
 #define PIN_WIRE_SDA        (50) // P61
 #define PIN_WIRE_SCL        (49) // P60
+
+#define PIN_WIRE_SDA         (50) // P61
+#define PIN_WIRE_SCL         (49) // P60
+#define PIN_WIRE_SDA1        ( 9) // P14
+#define PIN_WIRE_SCL1        ( 6) // P15
+#define PIN_WIRE_SDA2        (27) // P74
+#define PIN_WIRE_SCL2        (26) // P75
+#define PIN_WIRE_SDA3        (30) // P71
+#define PIN_WIRE_SCL3        (31) // P70
+#define PIN_WIRE_SDA4        (12) // P11
+#define PIN_WIRE_SCL4        (13) // P10
+
 
 extern const uint8_t SDA;
 extern const uint8_t SCL;
@@ -80,7 +121,8 @@ extern const uint8_t A5;
                                     (((p) == 37) ? 10 : \
                                     (((p) == 38) ? 11 : \
                                     (((p) == 39) ? 12 : \
-                                    NOT_AN_INTERRUPT)))))))))))))
+                                    (((p) == 48) ? 13 : \
+                                    NOT_AN_INTERRUPT))))))))))))))
 
 #ifdef __RL78__
 
@@ -787,5 +829,52 @@ extern const uint8_t A5;
 #define SERIAL_TXD2         24 // P77
 #define SERIAL_RXD2         25 // P76
 /* Define Serial Port Number */
+
+/* Define Firmata library */
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_INPUTS
+#define TOTAL_PINS              NUM_DIGITAL_PINS
+#define TOTAL_PORTS             15 //P00 - P147
+#define VERSION_BLINK_PIN       BUILTIN_LED1
+/* for FIRMATA specific for G24 */
+#define PIN_SERIAL0_RX         34
+#define PIN_SERIAL0_TX         35
+#define PIN_SERIAL1_RX          0
+#define PIN_SERIAL1_TX          1
+#define PIN_SERIAL2_RX         25
+#define PIN_SERIAL2_TX         24
+
+#if defined(UART_CHANNEL)
+#define IS_PIN_SERIAL0(p)        ((p) == PIN_SERIAL0_RX || (p) == PIN_SERIAL0_TX )
+#else
+#define IS_PIN_SERIAL0(p)        (0)
+#endif
+#if defined(UART1_CHANNEL)
+#define IS_PIN_SERIAL1(p)        ((p) == PIN_SERIAL1_RX || (p) == PIN_SERIAL1_TX)
+#else
+#define IS_PIN_SERIAL1(p)        (0)
+#endif
+#if defined(UART2_CHANNEL)
+#define IS_PIN_SERIAL2(p)        ((p) == PIN_SERIAL2_RX || (p) == PIN_SERIAL2_TX)
+#else
+#define IS_PIN_SERIAL2(p)        (0)
+#endif
+
+
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < NUM_DIGITAL_PINS && (!(IS_PIN_SERIAL(p))) && !((p) == 18) && !((p) == 19) && !((p) == 45) && !((p) == 51) )
+
+#define IS_PIN_ANALOG(p)        ((p) >= 52 && (p) < 58)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == PIN_WIRE_SDA || (p) == PIN_WIRE_SCL || (p) == PIN_WIRE_SDA1 || (p) == PIN_WIRE_SCL1  || (p) == PIN_WIRE_SDA2 || (p) == PIN_WIRE_SCL2  || (p) == PIN_WIRE_SDA3 || (p) == PIN_WIRE_SCL3  || (p) == PIN_WIRE_SDA4 || (p) == PIN_WIRE_SCL4)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+
+#define IS_PIN_SERIAL(p)        (IS_PIN_SERIAL0(p) || IS_PIN_SERIAL1(p) || IS_PIN_SERIAL2(p) )
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 52)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)
+#define ANALOG_TO_PIN(p)        ((p) + 52)
+/* Define Firmata library */
+
 
 #endif // #variant

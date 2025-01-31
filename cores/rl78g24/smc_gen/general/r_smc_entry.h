@@ -37,6 +37,7 @@ Includes
 #include "Config_ADC.h"
 #include "Config_IICA0.h"
 #include "Config_ITL000.h"
+#include "Config_ITL013.h"
 #include "Config_UART0.h"
 #include "Config_UART1.h"
 #include "Config_UART2.h"

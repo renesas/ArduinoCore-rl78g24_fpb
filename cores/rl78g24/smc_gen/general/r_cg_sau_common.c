@@ -38,6 +38,11 @@ Includes
 #include "Config_UART0.h"
 #include "Config_UART1.h"
 #include "Config_UART2.h"
+#include "Config_CSI10.h"
+#include "Config_CSI11.h"
+#include "Config_IIC11.h"
+#include "Config_IIC20.h"
+#include "Config_IIC21.h"
 #include "r_cg_sau_common.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
@@ -47,6 +52,16 @@ Includes
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
+extern void r_Config_UART1_interrupt_receive();
+extern void r_Config_IIC01_interrupt();
+extern void r_Config_IIC11_interrupt();
+extern void r_Config_IIC20_interrupt();
+extern void r_Config_IIC21_interrupt();
+extern void r_Config_UART0_interrupt_receive();
+extern void r_Config_UART1_interrupt_receive();
+extern void r_Config_UART2_interrupt_send();
+extern void r_Config_UART2_interrupt_receive();
+
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -60,6 +75,9 @@ void R_SAU0_Create(void)
     SAU0EN = 1U;    /* supplies input clock */
     R_Config_UART0_Create();
     R_Config_UART1_Create();
+    R_Config_UART2_Create();
+    R_Config_CSI10_Create();
+    R_Config_CSI11_Create();
 }
 
 /***********************************************************************************************************************
@@ -72,6 +90,7 @@ void R_SAU1_Create(void)
 {
     SAU1EN = 1U;    /* supplies input clock */
     R_Config_UART2_Create();
+    R_Config_IIC20_Create();
 }
 
 /***********************************************************************************************************************
@@ -185,4 +204,119 @@ void R_SAU0_Set_SnoozeOff(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+
+void r_Config_CSI10_UART1_interrupt_switching(void) {
+#if defined(UART1_CHANNEL) && ( UART1_CHANNEL == 1 )
+    /* Check bit [2:1] of register SMR03 == 01 , which is set in R_Config_UART1_Create(). */
+    if ( (SMR02 & 0x0006) == _0002_SAU_MODE_UART) {
+        /*
+         */
+        r_Config_UART1_interrupt_send();
+        return;
+    }
+#endif
+
+#if defined(CSI_CHANNEL2)
+    /* Check bit [2:1] of register SMR03 == 00 , which is set in R_Config_CSI11_Create(). */
+    if ( (SMR02 & 0x0006) == _0000_SAU_MODE_CSI) {
+        /* Call the interrupt handler for CSI11 (Master)
+         * If it is possible to distinguish between CSI11 (master) and CSI111 (slave), do so here. */
+        r_Config_CSI10_interrupt();
+        return;
+    }
+#endif
+}
+
+void r_Config_CSI11_IIC11_UART1_interrupt_switching(void) {
+#if defined(UART1_CHANNEL) && ( UART1_CHANNEL == 1 )
+    /* Check bit [2:1] of register SMR03 == 01 , which is set in R_Config_UART1_Create(). */
+    if ( (SMR03 & 0x0006) == _0002_SAU_MODE_UART) {
+        /*
+         */
+        r_Config_UART1_interrupt_receive();
+        return;
+    }
+#endif
+
+#if defined(CSI_CHANNEL3)
+    /* Check bit [2:1] of register SMR03 == 00 , which is set in R_Config_CSI11_Create(). */
+    if ( (SMR03 & 0x0006) == _0000_SAU_MODE_CSI) {
+        /* Call the interrupt handler for CSI11 (Master)
+         * If it is possible to distinguish between CSI11 (master) and CSI111 (slave), do so here. */
+        r_Config_CSI11_interrupt();
+        return;
+    }
+#endif
+
+#if defined(IIC_CHANNEL4) && (IIC_CHANNEL4 == 4)
+    /* Check bit [2:1] of register SMR03 == 10 , which is set in R_Config_IIC11_Create(). */
+    if ( (SMR03 & 0x0006) == _0004_SAU_MODE_IIC) {
+        r_Config_IIC11_interrupt();
+        return;
+    }
+#endif
+
+}
+
+
+void r_Config_IIC01_UART0_interrupt_switching(void) {
+#if defined(UART_CHANNEL) && ( UART_CHANNEL == 0 )
+    /* Check bit [2:1] of register SMR01 == 01 , which is set in R_Config_UART1_Create(). */
+    if ( (SMR01 & 0x0006) == _0002_SAU_MODE_UART) {
+        /*
+         */
+        r_Config_UART0_interrupt_receive();
+        return;
+    }
+#endif
+
+#if defined(IIC_CHANNEL2) && (IIC_CHANNEL2 == 2)
+    /* Check bit [2:1] of register SMR01 == 10 , which is set in R_Config_IIC11_Create(). */
+    if ( (SMR01 & 0x0006) == _0004_SAU_MODE_IIC) {
+        r_Config_IIC01_interrupt();
+        return;
+    }
+#endif
+}
+
+void r_Config_IIC20_UART2_interrupt_switching(void) {
+#if defined(UART2_CHANNEL) && ( UART2_CHANNEL == 2 )
+    /* Check bit [2:1] of register SMR10 == 01 , which is set in R_Config_UART1_Create(). */
+    if ( (SMR10 & 0x0006) == _0002_SAU_MODE_UART) {
+        /*
+         */
+        r_Config_UART2_interrupt_send();
+        return;
+    }
+#endif
+
+#if defined(IIC_CHANNEL1) && (IIC_CHANNEL1 == 1)
+    /* Check bit [2:1] of register SMR03 == 10 , which is set in R_Config_IIC11_Create(). */
+    if ( (SMR10 & 0x0006) == _0004_SAU_MODE_IIC) {
+        r_Config_IIC20_interrupt();
+        return;
+    }
+#endif
+}
+
+void r_Config_IIC21_UART2_interrupt_switching(void) {
+#if defined(UART2_CHANNEL) && ( UART2_CHANNEL == 2 )
+    /* Check bit [2:1] of register SMR10 == 01 , which is set in R_Config_UART1_Create(). */
+    if ( (SMR11 & 0x0006) == _0002_SAU_MODE_UART) {
+        /*
+         */
+        r_Config_UART2_interrupt_receive();
+        return;
+    }
+#endif
+
+#if defined(IIC_CHANNEL3) && (IIC_CHANNEL3 == 3)
+    /* Check bit [2:1] of register SMR03 == 10 , which is set in R_Config_IIC11_Create(). */
+    if ( (SMR11 & 0x0006) == _0004_SAU_MODE_IIC) {
+        r_Config_IIC21_interrupt();
+        return;
+    }
+#endif
+}
+
 /* End user code. Do not edit comment generated here */

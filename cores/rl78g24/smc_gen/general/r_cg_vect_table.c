@@ -31,7 +31,7 @@
 extern void PowerON_Reset (void);
 
 const unsigned char Option_Bytes[]  __attribute__ ((section (".option_bytes"))) = {
-    0xEFU, 0x3AU, 0xF0U, 0x85U
+    0xEFU, 0xFFU, 0xF0U, 0x85U
 };
 
 const unsigned char Security_Id[]  __attribute__ ((section (".security_id"))) = {
@@ -91,12 +91,14 @@ INT_WDTI,
 /*
  * INT_CSI20/INT_IIC20/INT_ST2 (0x14)
  */
-    r_Config_UART2_interrupt_send,
+//    r_Config_UART2_interrupt_send,
+    r_Config_IIC20_UART2_interrupt_switching,
 
 /*
  * INT_CSI21/INT_IIC21/INT_SR2 (0x16)
  */
-    r_Config_UART2_interrupt_receive,
+//    r_Config_UART2_interrupt_receive,
+    r_Config_IIC21_UART2_interrupt_switching,
 
 /*
  * INT_SRE2 (0x18)
@@ -121,7 +123,8 @@ INT_WDTI,
 /*
  * INT_TM00 (0x20)
  */
-	INT_TM00,
+    r_Config_TAU0_0_interrupt,
+
 /*
  * INT_SRE0/INT_TM01H (0x22)
  */
@@ -130,12 +133,23 @@ INT_WDTI,
 /*
  * INT_CSI10/INT_IIC10/INT_ST1 (0x24)
  */
-    r_Config_UART1_interrupt_send,
+#if defined(CSI_CHANNEL2) || ((defined(UART1_CHANNEL) && UART1_CHANNEL == 1 ))
+    r_Config_CSI10_UART1_interrupt_switching,
+#else
+    INT_SR1,
+#endif
+//    r_Config_UART1_interrupt_send,
+//    r_Config_CSI11_interrupt,
 
 /*
  * INT_CSI11/INT_IIC11/INT_SR1 (0x26)
  */
-    r_Config_UART1_interrupt_receive,
+#if defined(CSI_CHANNEL3) || ((defined(UART1_CHANNEL) && UART1_CHANNEL == 1 ))
+    r_Config_CSI11_IIC11_UART1_interrupt_switching,
+//    r_Config_CSI11_UART1_interrupt_switching,
+#else
+    INT_SR1,
+#endif
 
 /*
  * INT_SRE1/INT_TM03H (0x28)
@@ -150,7 +164,8 @@ INT_WDTI,
 /*
  * INT_CSI01/INT_IIC01/INT_SR0 (0x2C)
  */
-    r_Config_UART0_interrupt_receive,
+//    r_Config_UART0_interrupt_receive,
+    r_Config_IIC01_UART0_interrupt_switching,
 
 /*
  * INT_TM01 (0x2E)
@@ -160,12 +175,12 @@ INT_WDTI,
 /*
  * INT_TM02 (0x30)
  */
-    INT_TM02,
+    r_Config_TAU0_2_interrupt,
 
 /*
  * INT_TM03 (0x32)
  */
-    INT_TM03,
+    r_Config_TAU0_3_interrupt,
 
 /*
  * INT_AD0 (0x34)
@@ -234,8 +249,7 @@ INT_WDTI,
 /*
  * INT_P7/INT_TMKBSTP10 (0x4C)
  */
-    INT_P7,
-//    INT_TMKBSTP10,
+    r_Config_INTC_intp7_interrupt,
 
 /*
  * INT_P8/INT_TMKBSTR11 (0x4E)

@@ -11,8 +11,9 @@ extern "C"{
 #endif
 
 #define ANALOG_PIN_START_NUMBER	(52)
-//#define MAX_CYCLIC_HANDLER 		(8)
-#define EXTERNAL_NUM_INTERRUPTS (13)
+// 20241010
+#define MAX_CYCLIC_HANDLER 		(8)
+#define EXTERNAL_NUM_INTERRUPTS (14)
 
 /* PWM defines. */
 #define PWM_MIN			0
@@ -33,6 +34,7 @@ extern "C"{
 #define EXTERNAL_INTERRUPT_10	37
 #define EXTERNAL_INTERRUPT_11	38
 #define EXTERNAL_INTERRUPT_12	39
+#define EXTERNAL_INTERRUPT_13	48
 
 // 6 (TRD) +  1 (TKB30) +  1 (TKB31)
 #define	PWM_CH_NUM	(8)

@@ -36,6 +36,7 @@ Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
 #include "Config_ITL000.h"
+#include "Config_ITL013.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
@@ -58,6 +59,11 @@ void r_itl_interrupt(void)
     {
         ITLS0 &= (uint8_t)~_01_ITL_CHANNEL0_COUNT_MATCH_DETECTE;
         R_Config_ITL000_Callback_Shared_Interrupt();
+    }
+    if (_08_ITL_CHANNEL3_COUNT_MATCH_DETECTE == (ITLS0 & _08_ITL_CHANNEL3_COUNT_MATCH_DETECTE))
+    {
+        ITLS0 &= (uint8_t)~_08_ITL_CHANNEL3_COUNT_MATCH_DETECTE;
+        R_Config_ITL013_Callback_Shared_Interrupt();
     }
 }
 

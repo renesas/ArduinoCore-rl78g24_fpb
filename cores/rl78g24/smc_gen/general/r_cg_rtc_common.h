@@ -46,5 +46,6 @@ Global functions
 void R_RTC_Set_PowerOn (void);
 void R_RTC_Set_PowerOff (void);
 /* Start user code for function. Do not edit comment generated here */
+bool R_RTC_IsPowerOn(void);
 /* End user code. Do not edit comment generated here */
 #endif

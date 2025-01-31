@@ -69,4 +69,8 @@ void R_RTC_Set_PowerOff(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+bool R_RTC_IsPowerOn(void)
+{
+    return (RTCWEN == 1);
+}
 /* End user code. Do not edit comment generated here */

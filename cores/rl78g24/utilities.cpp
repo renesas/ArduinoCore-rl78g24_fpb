@@ -29,7 +29,7 @@ extern "C" {
 #include "Config_ADC.h"
 }
 
-#if defined(G22_FPB) || defined(G23_FPB)
+#if defined(G22_FPB) || defined(G23_FPB)|| defined(G24_FPB)
 #define USE_PERIODIC (1) // Set 1 when issue was solved. //KAD change from 0 to 1
 #else
 #define USE_PERIODIC (0) // Set 1 when issue was solved.
@@ -274,24 +274,6 @@ void setPowerManagementMode(uint8_t u8PowerManagementMode, uint16_t u16ADLL, uin
         if (CLS == 0) {
             g_u16ADLL = 0;
             g_u16ADUL = 1023;
-            g_u8PowerManagementMode = u8PowerManagementMode;
-        }
-        break;
-
-    case PM_SNOOZE_MODE:
-        if ((CLS == 0) && (MCS == 0)) {
-            if (u16ADLL > 1023) {
-                u16ADLL = 1023;
-            }
-            if (u16ADUL > 1023) {
-                u16ADUL = 1023;
-            }
-            if (u16ADLL > u16ADUL) {
-                u16ADLL = 0;
-                u16ADUL = 1023;
-            }
-            g_u16ADLL = u16ADLL;
-            g_u16ADUL = u16ADUL;
             g_u8PowerManagementMode = u8PowerManagementMode;
         }
         break;

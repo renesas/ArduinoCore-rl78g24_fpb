@@ -566,5 +566,18 @@ arduino::TwoWire Wire(0);
 
 #if     defined(IIC_CHANNEL1) && IIC_CHANNEL1 == 1
 //arduino::TwoWire Wire1 = TwoWire(1);
-arduino::TwoWire Wire1(1);
+arduino::TwoWire Wire4(1);
 #endif  /* defined(IIC_CHANNEL1) && IIC_CHANNEL1 == 1 */
+
+#if     defined(IIC_CHANNEL2) && IIC_CHANNEL2 == 2
+arduino::TwoWire Wire1(2);
+#endif  /* defined(IIC_CHANNEL2) && IIC_CHANNEL2 == 2 */
+
+#if     defined(IIC_CHANNEL3) && IIC_CHANNEL3 == 3
+arduino::TwoWire Wire2(3);
+#endif  /* defined(IIC_CHANNEL3) && IIC_CHANNEL3 == 3 */
+
+#if     defined(IIC_CHANNEL4) && IIC_CHANNEL4 == 4
+arduino::TwoWire Wire3(4);
+#endif  /* defined(IIC_CHANNEL4) && IIC_CHANNEL4 == 4 */
+

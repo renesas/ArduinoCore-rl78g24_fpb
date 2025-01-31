@@ -14,12 +14,12 @@
 * following link:
 * http://www.renesas.com/disclaimer
 *
-* Copyright (C) 2021, 2023 Renesas Electronics Corporation. All rights reserved.
+* Copyright (C) 2021, 2024 Renesas Electronics Corporation. All rights reserved.
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
 * File Name        : Config_RTC_user.c
-* Component Version: 1.4.0
+* Component Version: 1.5.0
 * Device(s)        : R7F101GLGxFB
 * Description      : This file implements device driver for Config_RTC.
 * Creation Date    : 
@@ -43,7 +43,10 @@ Includes
 /***********************************************************************************************************************
 Global variables and functions
 ***********************************************************************************************************************/
+extern volatile uint8_t g_rtc_interrupt_flag;
 /* Start user code for global. Do not edit comment generated here */
+voidFunc_t alarmUserCallback;
+voidFunc_t periodTimeUserCallback;
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -55,6 +58,24 @@ Global variables and functions
 void R_Config_RTC_Create_UserInit(void)
 {
     /* Start user code for user init. Do not edit comment generated here */
+    alarmUserCallback = NULL;
+    periodTimeUserCallback = NULL;
+    /* End user code. Do not edit comment generated here */
+}
+
+/***********************************************************************************************************************
+* Function Name: r_Config_RTC_callback_alarm
+* Description  : This function is alarm interrupt service handler.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+static void r_Config_RTC_callback_alarm(void)
+{
+    /* Start user code for r_Config_RTC_callback_alarm. Do not edit comment generated here */
+    if (NULL != alarmUserCallback)
+    {
+        alarmUserCallback();
+    }
     /* End user code. Do not edit comment generated here */
 }
 
@@ -67,6 +88,10 @@ void R_Config_RTC_Create_UserInit(void)
 static void r_Config_RTC_callback_constperiod(void)
 {
     /* Start user code for r_Config_RTC_callback_constperiod. Do not edit comment generated here */
+    if (NULL != periodTimeUserCallback)
+    {
+        periodTimeUserCallback();
+    }
     /* End user code. Do not edit comment generated here */
 }
 
@@ -78,6 +103,13 @@ static void r_Config_RTC_callback_constperiod(void)
 ***********************************************************************************************************************/
 void r_Config_RTC_interrupt(void)
 {
+//    g_rtc_interrupt_flag = 1U;
+    if (1U == WAFG)
+    {
+        /* clear WAFG */
+        RTCC1 &= (uint8_t)~_10_RTC_ALARM_MATCH;
+        r_Config_RTC_callback_alarm();
+    }
     if (1U == RIFG)
     {
         /* clear RIFG */

@@ -28,14 +28,14 @@ int main(void)
 
     /* Start RTC Timer */
 //    R_Config_RTC_Start();
-#if defined(G22_FPB) || defined(G23_FPB)
+#if defined(G22_FPB) || defined(G23_FPB) || defined(G24_FPB)
     R_Config_ITL013_SetCompareMatch(0x20, 0x0);
     R_Config_ITL013_Start();
 #endif // defined(G24_FPB)
 
 /* Power Off unused Peripheral */
 /* SERIAL ARRAY UNIT (SAU) */
-#if !defined(UART_CHANNEL) & (UART1_CHANNEL == 0) & !defined(CSI_CHANNEL)
+#if !defined(UART_CHANNEL) && (UART1_CHANNEL == 0) && !defined(CSI_CHANNEL)
     R_SAU0_Set_Reset();
     R_SAU0_Set_PowerOff();
 #endif
@@ -58,7 +58,7 @@ int main(void)
 #endif
 
 /* RTC */
-#if defined(G22_FPB) || defined(G23_FPB)
+#if defined(G22_FPB) || defined(G23_FPB) || defined(G24_FPB)
     #if !defined(RTC_ON) | (RTC_ON!=0)
         R_RTC_Set_PowerOff();
     #endif

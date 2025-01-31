@@ -77,12 +77,7 @@ void R_Config_ADC_Create_UserInit (void);
 void R_Config_ADC_ADS0_Get_Result_8bit(uint8_t * const buffer);
 MD_STATUS R_Config_ADC_Set_Reference(uint8_t mode);
 
-void R_Config_ADC_Set_SnoozeOn (void);
-void R_Config_ADC_Set_SnoozeOff (void);
-
 void R_Config_ADC_Set_ComparisonLimit(uint8_t upper, uint8_t lower);
-void R_Config_ADC_Snooze_Start(void);
-void R_Config_ADC_Snooze_Stop(void);
 
 void R_Config_ADC_Set_TemperatureSensor(void);
 void R_Config_ADC_Set_InternalReferenceVoltage(void);

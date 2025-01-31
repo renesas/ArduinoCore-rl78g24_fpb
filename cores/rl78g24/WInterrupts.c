@@ -1,5 +1,6 @@
+// WInterrupts.c
+//
 #include <inttypes.h>
-// #include <avr/pgmspace.h>
 #include <stdio.h>
 
 #include "utilities.h"
@@ -7,10 +8,6 @@
 #include "api/Common.h"
 #include "r_smc_entry.h"
 #include "platform.h"
-
-
-
-/* 1108 Ueeda add */
 
 typedef struct {
     void (*begin)();
@@ -28,10 +25,6 @@ Interrupts_func Int_func =
 };
 
 static bool IsFirst = true;
-
-// void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode)
-
-//void attachInterrupt(pin_size_t interruptNum, voidFuncPtr userFunc, int mode)
 
 void attachInterrupt(pin_size_t interruptNum, voidFuncPtr userFunc, PinStatus p_mode)
 {

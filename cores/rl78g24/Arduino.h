@@ -107,17 +107,9 @@ void loop();
 // Include board variant
 #include "pins_variant.h"
 
-// undefine stdlib's abs if encountered
-#ifdef abs
-#undef abs
-#endif // abs
-
-#define abs(x) ((x)>0?(x):-(x))
-
-
 #include "api/itoa.h"
 #ifndef configCPU_CLOCK_HZ
-#define configCPU_CLOCK_HZ 					(32000000)	//!< CPUの動作周波数（RTOS未使用時に定義）
+#define configCPU_CLOCK_HZ 					(48000000)	//!< CPUの動作周波数（RTOS未使用時に定義）
 #endif
 /* Analog reference mode. */
 #define DEFAULT			0x00
@@ -127,7 +119,7 @@ void loop();
 #define PM_NORMAL_MODE	0
 #define PM_HALT_MODE	1
 #define PM_STOP_MODE	2
-#define PM_SNOOZE_MODE	3
+//#define PM_SNOOZE_MODE	3 // Does not support SNOOZE
 
 
 #ifdef __RL78__

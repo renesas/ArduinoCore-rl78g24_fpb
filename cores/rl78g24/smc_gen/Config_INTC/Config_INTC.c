@@ -76,6 +76,8 @@ void R_Config_INTC_Create(void)
     PIF5 = 0U;    /* clear INTP5 interrupt flag */
     PMK6 = 1U;    /* disable INTP6 operation */
     PIF6 = 0U;    /* clear INTP6 interrupt flag */
+    PMK7 = 1U;    /* disable INTP7 operation */
+    PIF7 = 0U;    /* clear INTP7 interrupt flag */
     PMK8 = 1U;    /* disable INTP8 operation */
     PIF8 = 0U;    /* clear INTP8 interrupt flag */
     PMK9 = 1U;    /* disable INTP9 operation */
@@ -109,6 +111,9 @@ void R_Config_INTC_Create(void)
     /* Set INTP6 low priority */
     PPR16 = 1U;
     PPR06 = 1U;
+    /* Set INTP7 low priority */
+    PPR17 = 1U;
+    PPR07 = 1U;
     /* Set INTP8 low priority */
     PPR18 = 1U;
     PPR08 = 1U;
@@ -159,6 +164,8 @@ void R_Config_INTC_Create(void)
 //    PM1 |= 0x40U;
     /* Set INTP6 pin */
 //    PM14 |= 0x01U;
+    /* Set INTP7 pin */
+//    PM14 |= 0x02U;
     /* Set INTP8 pin */
 //    PM4 |= 0x04U;
     /* Set INTP9 pin */
@@ -341,6 +348,29 @@ void R_Config_INTC_INTP6_Stop(void)
 {
     PMK6 = 1U;    /* disable INTP6 interrupt */
     PIF6 = 0U;    /* clear INTP6 interrupt flag */
+}
+
+/***********************************************************************************************************************
+* Function Name: R_Config_INTC_INTP7_Start
+* Description  : This function clears INTP7 interrupt flag and enables interrupt.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_Config_INTC_INTP7_Start(void)
+{
+    PIF7 = 0U;    /* clear INTP7 interrupt flag */
+    PMK7 = 0U;    /* enable INTP7 interrupt */
+}
+/***********************************************************************************************************************
+* Function Name: R_Config_INTC_INTP7_Stop
+* Description  : This function disables INTP7 interrupt and clears interrupt flag.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_Config_INTC_INTP7_Stop(void)
+{
+    PMK7 = 1U;    /* disable INTP7 interrupt */
+    PIF7 = 0U;    /* clear INTP7 interrupt flag */
 }
 
 /***********************************************************************************************************************
@@ -767,6 +797,27 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
             EGN0_bit.no4 = 0U;
         }
         break;
+    case 13:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_13;
+        value.modeNum = mode;
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no7 = 0U;
+            EGN0_bit.no7 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no7 = 1U;
+            EGN0_bit.no7 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no7 = 1U;
+            EGN0_bit.no7 = 1U;
+        }
+        else{
+            EGP0_bit.no7 = 0U;
+            EGN0_bit.no7 = 0U;
+        }
+        break;
     }
 }
 
@@ -809,6 +860,9 @@ void R_Config_INTC_INTP_Start(void){
     }
     else if (value.pinNum == EXTERNAL_INTERRUPT_12){
         R_Config_INTC_INTP4_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_13){
+        R_Config_INTC_INTP7_Start();
     }
 }
 
@@ -853,6 +907,9 @@ void R_Config_INTC_INTP_Stop(uint8_t interruptNum){
            break;
         case 12:
            R_Config_INTC_INTP4_Stop();
+           break;
+        case 13:
+           R_Config_INTC_INTP7_Stop();
            break;
     }
 }

@@ -69,14 +69,14 @@ void R_Systeminit(void)
     PRR1 = 0x00U;    /* release DAC, PGA, ITL, DALI module */
     PRR2 = 0x00U;    /* release FAA, MEM, TKB, TRG, TRD, PWMOPA, TRX, TRJ module */
     /* Set peripheral settings */
-    R_ITL_Create();
-    R_TAU0_Create();
+    TML32EN = 1U;    /* start 32-bits IT clock    R_ITL_Create(); */
+    TAU0EN = 1U;    /* start TAU0 clock   R_TAU0_Create(); */
     R_TKB_Create();
     R_TRD_Create();
-    R_SAU0_Create();
-    R_SAU1_Create();
+    SAU0EN = 1U;    /* supplies input clock    R_SAU0_Create(); */
+    SAU1EN = 1U;    /* supplies input clock     R_SAU1_Create(); */
     R_Config_INTC_Create();
+    /*    R_Config_IICA0_Create();  */
     R_Config_RTC_Create();
     R_Config_ADC_Create();
-    R_Config_IICA0_Create();
 }

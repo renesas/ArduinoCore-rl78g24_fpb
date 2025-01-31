@@ -35,8 +35,10 @@ Pragma directive
 Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
-// #include "Config_TAU0_0.h"
+#include "Config_TAU0_0.h"
 #include "Config_TAU0_1_Micros.h"
+#include "Config_TAU0_2.h"
+#include "Config_TAU0_3.h"
 #include "r_cg_tau_common.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
@@ -58,8 +60,10 @@ void R_TAU0_Create(void)
 {
     TAU0EN = 1U;    /* start TAU0 clock */
     /* Set TAU0 settings */
-//    R_Config_TAU0_0_Create();
+    R_Config_TAU0_0_Create();
     R_Config_TAU0_1_Micros_Create();
+    R_Config_TAU0_2_Create();
+    R_Config_TAU0_3_Create();
 }
 
 /***********************************************************************************************************************

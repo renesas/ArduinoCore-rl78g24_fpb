@@ -6,11 +6,13 @@ MEMORY
 	OPT : ORIGIN = 0xC0, LENGTH = 4
 	SEC_ID : ORIGIN = 0xC4, LENGTH = 10
 	OCDSTAD : ORIGIN = 0xCE, LENGTH = 10
-	OCDROM : ORIGIN = 0x1fe00, LENGTH = 0x200
+	OCDROM : ORIGIN = 0x1ff00, LENGTH = 0x100
 	ROM : ORIGIN = 0xD8, LENGTH = 130344
 	MIRROR : ORIGIN = 0xF2000, LENGTH = 44800
 	SADDR : ORIGIN = 0xffe20, LENGTH = 0x000a0
 	RAM : ORIGIN = 0xFCF00, LENGTH = 12288
+	RAM_CODE : ORIGIN = 0xFD800, LENGTH = 0x1000
+	RAM_DATA : ORIGIN = 0xFE800, LENGTH = 0x800	
 	TRACERAM  : ORIGIN = 0xFD300, LENGTH = 1024
 }
 
@@ -45,18 +47,14 @@ SECTIONS
 	{
 		*(.plt)
 		*(.lowtext)
+		. = ALIGN(2);
 	} > ROM
 
 	__mdata = .;
 
-	.text (. + __romdatacopysize): 
-	{
-		*(.text)
-		*(.text.*)
-		/*INPUT_SECTION_FLAGS(SHF_EXECINSTR) *(*_n)*/
-	} >ROM AT>ROM
-
-	.init :
+	PROVIDE(__rl78_abs__ = 0);
+	.init (. + __romdatacopysize): 
+	/* modify */
 	{
 		KEEP(*(.init))
 		. = ALIGN(2);
@@ -101,8 +99,17 @@ SECTIONS
 	}>ROM
 
 
-	.textf :
+	/* move text section */
+	.text (. + __romdatacopysize): 
 	{
+		*(.text)
+		*(.text.*)
+		etext = .;
+		. = ALIGN(2);
+		/*INPUT_SECTION_FLAGS(SHF_EXECINSTR) *(*_n)*/
+	} >ROM AT>ROM
+	.textf :
+	{   	. = ALIGN(2);
 		*(.textf)
 		*(.textf.*)
 		/*INPUT_SECTION_FLAGS(SHF_EXECINSTR) *(*_f)*/
@@ -161,18 +168,28 @@ SECTIONS
 	} > RAM AT> ROM
 	PROVIDE(__romdatafstart = LOADADDR(.dataf));
 	PROVIDE (__romdatafcopysize = SIZEOF(.dataf));
-/*
-	.faa_code 0xFD800 : {
-		__faa_code_start = .;
-		. += 4096;
-		__faa_code_end = .;
-	} >RAM
-	.faa_data 0xFE800 : {
-		__faa_data_start = .;
-		. += 2048; 
-		__faa_data_end = .;
-	} >RAM
-*/
+	.FAA_CODE 0xFD800 : {
+		. = ALIGN(2);
+		PROVIDE (__faa_code_start = .);
+		. = ALIGN(2);
+		*(FAACODE)
+		*(FAACODE.*)
+		. = ALIGN(2);
+		PROVIDE (__faa_code_end = .);
+	} >RAM_CODE AT > ROM
+	PROVIDE(__romfaacodestart = LOADADDR(.FAA_CODE));
+	PROVIDE (__romfaacodecopysize = SIZEOF(.FAA_CODE));
+	.FAA_DATA 0xFE800 : {
+		. = ALIGN(2);
+		PROVIDE (__faa_data_start = .);
+		. = ALIGN(2);
+		*(FAADATA)
+		*(FAADATA.*)
+		. = ALIGN(2);
+		PROVIDE (__faa_data_end = .);
+	} >RAM_DATA AT > ROM
+	PROVIDE(__romfaadatastart = LOADADDR(.FAA_DATA));
+	PROVIDE (__romfaadatacopysize = SIZEOF(.FAA_DATA));
 	/* FAA area end */
 
 	.sdata : {
@@ -216,7 +233,7 @@ SECTIONS
 		. = ALIGN(2);
 		__esbss = .;
 
-	} >SADDR AT>RAM
+	} >SADDR AT>SADDR
 	PROVIDE(__sbsssize = SIZEOF(.sbss));
 
 	.bss :
@@ -249,7 +266,7 @@ SECTIONS
 	PROVIDE(__bssfsize = SIZEOF(.bssf));
 
 	PROVIDE(__stack_size = 0x100);
-	.stack 0xFFEDC (NOLOAD) : AT(0xFFEDC)
+	.stack 0xFFE20 (NOLOAD) : AT(0xFFE20)
 	{
 
 		PROVIDE(__stack = .);

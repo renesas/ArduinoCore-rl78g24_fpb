@@ -7,6 +7,10 @@
  * Pins descriptions
  */
 
+const uint8_t SS   = PIN_SPI_SS;
+const uint8_t MOSI = PIN_SPI_MOSI;
+const uint8_t MISO = PIN_SPI_MISO;
+const uint8_t SCK  = PIN_SPI_SCK;
 const uint8_t SDA = PIN_WIRE_SDA;
 const uint8_t SCL = PIN_WIRE_SCL;
 

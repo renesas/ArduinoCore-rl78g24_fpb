@@ -165,6 +165,22 @@ void r_Config_INTC_intp6_interrupt(void)
     /* End user code. Do not edit comment generated here */
 }
 
+
+/***********************************************************************************************************************
+* Function Name: r_Config_INTC_intp7_interrupt
+* Description  : This function is INTP7 interrupt service routine.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void r_Config_INTC_intp7_interrupt(void)
+{
+    /* Start user code for r_Config_INTC_intp7_interrupt. Do not edit comment generated here */
+    if (g_afInterruptFuncTable[13] != NULL) {
+        (*g_afInterruptFuncTable[13])();
+    }
+     /* End user code. Do not edit comment generated here */
+}
+
 /***********************************************************************************************************************
 * Function Name: r_Config_INTC_intp8_interrupt
 * Description  : This function is INTP8 interrupt service routine.

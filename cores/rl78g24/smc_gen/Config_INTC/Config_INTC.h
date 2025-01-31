@@ -63,6 +63,8 @@ void R_Config_INTC_INTP5_Start (void);
 void R_Config_INTC_INTP5_Stop (void);
 void R_Config_INTC_INTP6_Start (void);
 void R_Config_INTC_INTP6_Stop (void);
+void R_Config_INTC_INTP7_Start (void);
+void R_Config_INTC_INTP7_Stop (void);
 void R_Config_INTC_INTP8_Start (void);
 void R_Config_INTC_INTP8_Stop (void);
 void R_Config_INTC_INTP9_Start (void);

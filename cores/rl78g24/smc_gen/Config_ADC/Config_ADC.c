@@ -188,9 +188,9 @@ MD_STATUS R_Config_ADC_ADS0_Set_ADChannel(e_ad_channel_t channel)
         ADS0 &= _C0_AD_ADV_INPUT_CLEAR;
         ADS0 |= (uint8_t)channel;
     }
-
     return (status);
 }
+
 
 /* Start user code for adding. Do not edit comment generated here */
 
@@ -245,27 +245,7 @@ MD_STATUS R_Config_ADC_Set_Reference(uint8_t mode)
     return status;
 }
 
-void R_Config_ADC_Set_SnoozeOn(void)
-{
-    AWC = 1U;    /* use wakeup function */
-}
-void R_Config_ADC_Set_SnoozeOff(void)
-{
-    AWC = 0U;    /* stop wakeup function */
-}
 
-void R_Config_ADC_Snooze_Start(void)
-{
-    ADIF0 = 0U;    /* clear INTAD interrupt flag */
-    ADMK0 = 0U;    /* enable INTAD interrupt */
-    ADCE = 1U;    /* enable AD comparator */
-}
-
-void R_Config_ADC_Snooze_Stop(void)
-{
-    ADIF0 = 0U;    /* clear INTAD interrupt flag */
-    ADMK0 = 1U;    /* disable INTAD interrupt */
-}
 
 
 void R_Config_ADC_Set_ComparisonLimit(uint8_t upper, uint8_t lower)
